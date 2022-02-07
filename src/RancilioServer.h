@@ -151,11 +151,33 @@ String getValue(String varName) {
     return "(unknown variable " + varName + ")";
 }
 
+/** @brief generates HTML code for displaying a machine variable
+ *
+ * @param varName should be listed in editableVars
+ * @return the html fragment
+ */
+String renderValue(const String& varName) {
+
+    // TODO: is it really ok to set an *id* here
+    // We have no control if it is really unique
+
+    String value = getValue(varName);
+    if (value.startsWith("((unknown") || value.startsWith("Unknown")) {
+        return value;
+    } else {
+        //wrap it in a span with corresponding id called var_{VARNAME}
+        value = "<span id=\"var_" + varName + "\" >" + value;
+        value += "</span>";
+        return value;
+    }
+}
+
+
 String staticProcessor(const String& var) {
     if (var.startsWith("VAR_EDIT_")) {
         return generateForm(var.substring(9)); // cut off "VAR_EDIT_"
     } else if (var.startsWith("VAR_SHOW_")) {
-        return getValue(var.substring(9)); // cut off "VAR_SHOW_"
+        return renderValue(var.substring(9)); // cut off "VAR_SHOW_"
     }
 
     String varLower(var);
